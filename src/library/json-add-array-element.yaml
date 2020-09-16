@@ -25,7 +25,8 @@
 
     jq --argjson node "$(< {{ node }} )" '{{ branch }} += [$node] ' {{ base }} > {{ base }}.tmp
     cp {{ base }}.tmp {{ base }}
-
+  args:
+    executable: /bin/bash
   register: output
 
 - name: show debug

@@ -4,7 +4,25 @@
     msg: ">> {{item}}"
   when: VERBOSE == "true"
 
-- name: "initialize folder for host {{item}} with protocol {{protocol}}"
+- name: Set host
+  set_fact:
+    host: "{{APP_NAME}}.{{PROJECT_NAME}}.apps.{{item}}.{{API_DOMAIN}}"
+- debug: msg="{{host}}"
+
+- name: Route_list
+  set_fact:
+    route_list:
+      resources: "{{ [ {'spec': {'host': host, 'path': '/'}}] }}"
+
+- name: Set dRouter
+  set_fact:
+    dRouter: "{{item}}"
+
+- name: Set projectName
+  set_fact:
+    projectName: "{{PROJECT_NAME}}"
+
+- name: "initialize folder for host {{host}} with protocol {{protocol}}"
   delegate_to: localhost
   shell: |
     rm -f files.output/gslb-{{GSLB_DOMAIN}}/states/*
@@ -13,12 +31,12 @@
 
 - name: "set query_expression for TLS hostPaths query"
   set_fact:
-    query_expression: "{{ 'spec.tls != None' + ' && spec.host == ' + single_quote + item + single_quote }}"
+    query_expression: "{{ 'spec.tls != None' + ' && spec.host == ' + single_quote + host + single_quote }}"
   when: protocol == "https"
 
 - name: "set query_expression for non-TLS hostPaths query"
   set_fact:
-    query_expression: "{{ 'spec.tls == None' + ' && spec.host == ' + single_quote + item + single_quote }}"
+    query_expression: "{{ 'spec.tls == None' + ' && spec.host == ' + single_quote + host + single_quote }}"
   when: protocol == "http"
 
 - name: "Show query_expression for hostPaths"
@@ -35,7 +53,7 @@
 
 - name: Set sendString and receiveString for GSLB monitor probes
   set_fact:
-    sendString: "{{ sendString + 'GET ' + (inner.path|default('/', true)|regex_replace('(.*[^/])$', '\\1' + '/')) + ' HTTP/1.1' + crLf + 'Host: ' + inner.host.split('.')[0] + '.' + BASE_DOMAIN + crLf + 'User-Agent: F5 Cloud Services' + crLf + crLf}}"
+    sendString: "{{ sendString + 'GET ' + (inner.path|default('/', true)|regex_replace('(.*[^/])$', '\\1' + '/')) + ' HTTP/1.1' + crLf + 'Host: ' + inner.host.split('.')[0] + '.apps.' + BASE_DOMAIN + crLf + 'User-Agent: F5 Cloud Services' + crLf + crLf}}"
     receiveString: "{{ receiveString + 'HTTP/1.. 200 OK' + crLf + '.*' }}"
   with_items: "{{ route_list.resources | json_query(query) }}"
   loop_control:
@@ -53,7 +71,7 @@
   set_fact:
     sendString: "{{ sendString | regex_replace( ecrLf + ecrLf + '$', ecrLf + 'Connection: close' + ecrLf + ecrLf) }}"
 
-- name: "Show GSLB probing strings for host {{item}}"
+- name: "Show GSLB probing strings for host {{host}}"
   debug:
     msg: 
     - "sendString: {{sendString}}"
@@ -66,7 +84,7 @@
   delegate_to: localhost
   shell: |
     set -e
-    cp "files.input/f5aas-gslb-state.tmpl.json" "files.output/gslb-{{GSLB_DOMAIN}}/states/{{protocol}}.{{item}}.json"
+    cp "files.input/f5aas-gslb-state.tmpl.json" "files.output/gslb-{{GSLB_DOMAIN}}/states/{{protocol}}.{{host}}.json"
 
 #- name: show
 #  debug:
@@ -85,12 +103,12 @@
 - name: "Prepare the gslbState, parametrize the template file"
   delegate_to: localhost
   replace:
-    path: "files.output/gslb-{{GSLB_DOMAIN}}/states/{{protocol}}.{{item}}.json"
+    path: "files.output/gslb-{{GSLB_DOMAIN}}/states/{{protocol}}.{{host}}.json"
     regexp: "{{ inner.expr }}"
     replace: "{{ inner.replace }}"
   with_items:
       - { expr: '%%dRouter%%', replace: "{{dRouter}}" }
-      - { expr: '%%host%%', replace: "{{item}}" }
+      - { expr: '%%host%%', replace: "{{host}}" }
       - { expr: '%%monitorType%%', replace: "{{monitorType}}" }
       - { expr: '%%project%%', replace: "{{projectName}}" }
       - { expr: '%%protocol%%', replace: "{{protocol}}" }
@@ -103,7 +121,7 @@
 - name: "Prepare the gslbState, parametrize the template file with publicAddress"
   delegate_to: localhost
   replace:
-    path: "files.output/gslb-{{GSLB_DOMAIN}}/states/{{protocol}}.{{item}}.json"
+    path: "files.output/gslb-{{GSLB_DOMAIN}}/states/{{protocol}}.{{host}}.json"
     regexp: "%%publicAddress%%"
     replace: "{{publicAddress[dRouter] | to_json}}"
 
@@ -116,14 +134,17 @@
 - name: "Create temporary gslbState file in JSON format"
   copy: content="{{ gslbState | to_nice_json(8) }}" dest=files.output/gslbState.requested.json
 
+- debug: msg="{{gslbState}}"
 - name: "Name gslbState the array in files.output/gslbState.requested.json"
   shell: |
     set -e
     set -x
     cp files.output/gslbState.requested.json files.output/gslbState.requested.json.tmp
     jq -s ' flatten | { gslbState: . }' files.output/gslbState.requested.json.tmp > files.output/gslbState.requested.json
-
+  args:
+    executable: /bin/bash
   register: output
+  when: (gslbState is defined)
 
 - name: show debug
   debug:
@@ -134,7 +155,7 @@
 - name: "Add gslbState element into to JSON document"
   include_tasks: library/json-add-array-element.yaml
   vars:
-    node: "files.output/gslb-{{GSLB_DOMAIN}}/states/{{protocol}}.{{item}}.json"
+    node: "files.output/gslb-{{GSLB_DOMAIN}}/states/{{protocol}}.{{host}}.json"
     branch: ".gslbState"
     base: "files.output/gslbState.requested.json"
 
@@ -154,5 +175,4 @@
 - name: "Save the requested gslbState in vars/gslbState.desired.yaml (no elements in it)"
   copy: content="gslbState:\n" dest=vars/gslbState.desired.yaml
   when: gslbStateRequestedJson.stdout == ''
-
 

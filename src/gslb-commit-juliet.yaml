@@ -1,0 +1,62 @@
+- hosts: localhost
+  gather_facts: no
+  vars:
+    API_DOMAIN: demo.red-chesterfield.com
+    target_clusters:
+      - juliet-alpha
+      - juliet-bravo
+    APP_NAME: pacman
+    PROJECT_NAME: pacman-app
+  vars_files:
+    - "vars/credentials.yaml"
+    - "vars/setup.yaml"
+    #- "vars/gslbState.desired.yaml"
+
+  pre_tasks:
+    - debug: msg="BASE_DOMAIN={{BASE_DOMAIN}}"
+    - name: Generate apiEndpoint URLs
+      set_fact:
+        apiEndpoint: "{{ apiEndpoint|default({}) | combine({ item: 'https://api.'+ item + '.' + API_DOMAIN + ':6443' }) }}"
+      loop: "{{target_clusters}}"
+    - debug: msg="{{apiEndpoint}}"
+
+    - name: Retrieve publicAddress
+      set_fact:
+        publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[0], 'az2': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[1]} }) }}"
+      loop: "{{target_clusters}}"
+
+    - debug: msg="{{publicAddress}}"
+
+    - name: Pip install certifi
+      pip:
+        name: certifi
+        extra_args: --user --upgrade
+    - name: Pip install kubernetes
+      pip:
+        name: kubernetes
+        extra_args: --user --upgrade
+    - name: Pip install openshift
+      pip:
+        name: openshift
+        extra_args: --user --upgrade
+
+    - name: Pip install jq
+      pip:
+        name: jq
+        extra_args: --user --upgrade
+    
+    - name: "Reset gslbState.desired.yaml"
+      shell: |
+        echo "gslbState: []" > vars/gslbState.desired.yaml
+      args:
+        executable: /bin/bash
+  roles:
+    - f5aas-gslb-add-retrieved-routes
+    - role: f5aas-gslb-prepare-subscription
+    - role: f5aas-gslb-login
+    - role: f5aas-gslb-get-account-details
+    - role: f5aas-gslb-publish-subscription
+    - role: f5aas-gslb-logout
+
+
+

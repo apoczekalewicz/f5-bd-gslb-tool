@@ -21,7 +21,9 @@
     cp {{ base }}.tmp {{ base }}
 
   register: output
-
+  args:
+    executable: /bin/bash
+    
 - name: show debug
   delegate_to: localhost
   debug:

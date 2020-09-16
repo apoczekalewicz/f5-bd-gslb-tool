@@ -6,21 +6,22 @@
 
 # non-TLS
 
-- name: "set projectHosts: select non-TLS routes out of project routes"
-  set_fact:
-    query_expression: "spec.tls == None"
-  when: ROUTES_TYPE == "http"
+#- name: "set projectHosts: select non-TLS routes out of project routes"
+#  set_fact:
+#    query_expression: "spec.tls == None"
+#  when: ROUTES_TYPE == "http"
 
-- name: "set projectHosts: stored in variable using route_list.resources"
-  set_fact:
-    projectHosts: "{{ route_list.resources | json_query(query) | unique}}"
-  vars:
-    query: "[?({{query_expression}})].spec.host"
-  when: ROUTES_TYPE == "http"
+#- name: "set projectHosts: stored in variable using route_list.resources"
+#  set_fact:
+#    projectHosts: "{{ route_list.resources | json_query(query) | unique}}"
+#  vars:
+#    query: "[?({{query_expression}})].spec.host"
+#  when: ROUTES_TYPE == "http"
+#- debug: msg="{{projectHosts}}"
 
 - name: "Processing non-TLS routes for each host"
   include_tasks: routes.yaml
-  with_items: "{{ projectHosts }}"
+  with_items: "{{ target_clusters }}"
   vars:
     monitorType: "http_advanced"
     protocol: "http"
