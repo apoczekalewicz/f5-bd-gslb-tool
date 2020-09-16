@@ -37,6 +37,11 @@
         name: dnspython
         extra_args: --user --upgrade
 
+    - name: Pip install dnspython
+      pip:
+        name: pydig
+        extra_args: --user --upgrade
+  
     - debug: msg="Lookup IPs"
     - name: Generate apiEndpoint URLs
       set_fact:
