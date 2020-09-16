@@ -14,19 +14,6 @@
 
   pre_tasks:
     - debug: msg="BASE_DOMAIN={{BASE_DOMAIN}}"
-    - name: Generate apiEndpoint URLs
-      set_fact:
-        apiEndpoint: "{{ apiEndpoint|default({}) | combine({ item: 'https://api.'+ item + '.' + API_DOMAIN + ':6443' }) }}"
-      loop: "{{target_clusters}}"
-    - debug: msg="{{apiEndpoint}}"
-
-    - name: Retrieve publicAddress
-      set_fact:
-        publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[0], 'az2': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[1]} }) }}"
-      loop: "{{target_clusters}}"
-
-    - debug: msg="{{publicAddress}}"
-
     - name: Pip install certifi
       pip:
         name: certifi
@@ -49,6 +36,20 @@
       pip:
         name: dnspython
         extra_args: --user --upgrade
+
+    - debug: msg="Lookup IPs"
+    - name: Generate apiEndpoint URLs
+      set_fact:
+        apiEndpoint: "{{ apiEndpoint|default({}) | combine({ item: 'https://api.'+ item + '.' + API_DOMAIN + ':6443' }) }}"
+      loop: "{{target_clusters}}"
+    - debug: msg="{{apiEndpoint}}"
+
+    - name: Retrieve publicAddress
+      set_fact:
+        publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[0], 'az2': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[1]} }) }}"
+      loop: "{{target_clusters}}"
+
+    - debug: msg="{{publicAddress}}"
 
     - name: "Reset gslbState.desired.yaml"
       shell: |
