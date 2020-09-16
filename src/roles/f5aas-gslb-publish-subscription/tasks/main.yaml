@@ -1,9 +1,4 @@
 ---
-- name: include vars/gslbState.desired.yaml again
-  include_vars:
-    file: ../../vars/gslbState.desired.yaml
-- debug: msg="{{gslbState}}"
-
 - name: retrieve list of existing GSLB subscriptions
   delegate_to: localhost
   uri:

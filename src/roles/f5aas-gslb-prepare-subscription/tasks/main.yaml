@@ -1,4 +1,8 @@
 ---
+- name: include vars/gslbState.desired.yaml again
+  include_vars:
+    file: ../../vars/gslbState.desired.yaml
+- debug: msg="{{gslbState}}"
 
 - name: "initialize folder for GSLB_DOMAIN {{GSLB_DOMAIN}}"
   delegate_to: localhost
