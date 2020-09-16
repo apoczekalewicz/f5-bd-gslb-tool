@@ -43,7 +43,8 @@
 
     - name: Retrieve publicAddress
       set_fact:
-        publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[0], 'az2': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[1]} }) }}"
+        #publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[0], 'az2': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[1]} }) }}"
+        publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'multicloud-console.apps.'+item+'.demo.red-chesterfield.com').split(',')[0]} }) }}"
       loop: "{{target_clusters}}"
 
     - debug: msg="{{publicAddress}}"
