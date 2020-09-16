@@ -37,9 +37,9 @@
         name: dnspython
         extra_args: --user --upgrade
 
-    - name: Pip install dnspython
+    - name: Pip install dig
       pip:
-        name: pydig
+        name: dig
         extra_args: --user --upgrade
   
     - debug: msg="Lookup IPs"
