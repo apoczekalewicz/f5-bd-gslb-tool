@@ -8,7 +8,7 @@
     APP_NAME: pacman
     PROJECT_NAME: pacman-app
   vars_files:
-    - "vars/credentials.yaml"
+    # - "vars/credentials.yaml"
     - "vars/setup.yaml"
     #- "vars/gslbState.desired.yaml"
 
@@ -44,7 +44,7 @@
       pip:
         name: jq
         extra_args: --user --upgrade
-    
+
     - name: "Reset gslbState.desired.yaml"
       shell: |
         echo "gslbState: []" > vars/gslbState.desired.yaml
