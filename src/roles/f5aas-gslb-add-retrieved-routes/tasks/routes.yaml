@@ -6,7 +6,7 @@
 
 - name: Set host
   set_fact:
-    host: "{{APP_NAME}}.{{PROJECT_NAME}}.apps.{{item}}.{{API_DOMAIN}}"
+    host: "{{APP_NAME}}.{{GSLB_ZONE}}.juliet.{{API_DOMAIN}}"
 - debug: msg="{{host}}"
 
 - name: Route_list
@@ -53,7 +53,7 @@
 
 - name: Set sendString and receiveString for GSLB monitor probes
   set_fact:
-    sendString: "{{ sendString + 'GET ' + (inner.path|default('/', true)|regex_replace('(.*[^/])$', '\\1' + '/')) + ' HTTP/1.1' + crLf + 'Host: ' + inner.host.split('.')[0] + '.apps.' + BASE_DOMAIN + crLf + 'User-Agent: F5 Cloud Services' + crLf + crLf}}"
+    sendString: "{{ sendString + 'GET ' + (inner.path|default('/', true)|regex_replace('(.*[^/])$', '\\1' + '/')) + ' HTTP/1.1' + crLf + 'Host: ' + host + crLf + 'User-Agent: F5 Cloud Services' + crLf + crLf}}"
     receiveString: "{{ receiveString + 'HTTP/1.. 200 OK' + crLf + '.*' }}"
   with_items: "{{ route_list.resources | json_query(query) }}"
   loop_control:
