@@ -2,9 +2,6 @@
   gather_facts: no
   vars:
     API_DOMAIN: demo.red-chesterfield.com
-    target_clusters:
-      - juliet-alpha
-      - juliet-bravo
     APP_NAME: pacman
     PROJECT_NAME: pacman-app
   vars_files:
