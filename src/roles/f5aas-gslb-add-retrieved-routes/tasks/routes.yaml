@@ -6,7 +6,7 @@
 
 - name: Set host
   set_fact:
-    host: "{{APP_NAME}}.{{GSLB_ZONE}}.juliet.{{API_DOMAIN}}"
+    host: "{{APP_NAME}}.{{GSLB_ZONE}}.{{BASE_DOMAIN}}"
 - debug: msg="{{host}}"
 
 - name: Route_list
