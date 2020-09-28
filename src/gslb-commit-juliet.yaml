@@ -11,29 +11,18 @@
 
   pre_tasks:
     - debug: msg="BASE_DOMAIN={{BASE_DOMAIN}}"
-    #- name: Pip install certifi
-    #  pip:
-    #    name: certifi
-    #    extra_args: --user --upgrade
-    #- name: Pip install kubernetes
-    #  pip:
-    #    name: kubernetes
-    #    extra_args: --user --upgrade
-    #- name: Pip install openshift
-    #  pip:
-    #    name: openshift
-    #    extra_args: --user --upgrade
 
-    #- name: Pip install jq
-    #  pip:
-    #    name: jq
-    #    extra_args: --user --upgrade
+    - name: Pip install dependencies
+      pip:
+        name:
+        - setuptools
+        - certifi
+        - dnspython
+        - dig
+        - kubernetes
+        - openshift
+        extra_args: --user --upgrade
 
-    #- name: Pip install dnspython
-    #  pip:
-    #    name: dnspython
-    #    extra_args: --user --upgrade
-  
     - debug: msg="Lookup IPs"
     - name: Generate apiEndpoint URLs
       set_fact:
