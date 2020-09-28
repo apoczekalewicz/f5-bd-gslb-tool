@@ -21,7 +21,7 @@
         - dig
         - kubernetes
         - openshift
-        extra_args: --user --upgrade
+        extra_args: --upgrade
 
     - debug: msg="Lookup IPs"
     - name: Generate apiEndpoint URLs
