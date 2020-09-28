@@ -19,8 +19,8 @@
         - certifi
         - dnspython
         - dig
-        - kubernetes
-        - openshift
+        # - kubernetes
+        # - openshift
         extra_args: --upgrade
 
     - debug: msg="Lookup IPs"
