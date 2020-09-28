@@ -12,16 +12,16 @@
   pre_tasks:
     - debug: msg="BASE_DOMAIN={{BASE_DOMAIN}}"
 
-    - name: Pip install dependencies
-      pip:
-        name:
-        - setuptools
-        - certifi
-        - dnspython
-        - dig
-        # - kubernetes
-        # - openshift
-        extra_args: --upgrade --user
+    # - name: Pip install dependencies
+    #   pip:
+    #     name:
+    #     - setuptools
+    #     - certifi
+    #     - dnspython
+    #     - dig
+    #     # - kubernetes
+    #     # - openshift
+    #     extra_args: --upgrade --user
 
     - debug: msg="Lookup IPs"
     - name: Generate apiEndpoint URLs
