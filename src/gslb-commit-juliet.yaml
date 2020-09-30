@@ -22,6 +22,9 @@
     #     # - kubernetes
     #     # - openshift
     #     extra_args: --upgrade --user
+    - set_fact:
+      F5AAS_PASS: "{{ANSIBLE_NET_PASSWORD}}"
+      F5AAS_USER: "{{ANSIBLE_NET_USER}}"
 
     - debug: msg="Lookup IPs"
     - name: Generate apiEndpoint URLs
