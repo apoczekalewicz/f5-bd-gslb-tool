@@ -23,8 +23,8 @@
     #     # - openshift
     #     extra_args: --upgrade --user
     - set_fact:
-        F5AAS_PASS: "{{ANSIBLE_NET_PASSWORD}}"
-        F5AAS_USER: "{{ANSIBLE_NET_USERNAME}}"
+        F5AAS_PASS: "{{ansible_net_password}}"
+        F5AAS_USER: "{{ansbile_net_username}}"
 
     - debug: msg="Lookup IPs"
     - name: Generate apiEndpoint URLs
