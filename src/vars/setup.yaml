@@ -8,6 +8,9 @@
 #
 GSLB_ZONE: www-apps
 BASE_DOMAIN: juliet.{{API_DOMAIN}}
+BASE_AWS_DOMAIN: demo.red-chesterfield.com
+BASE_GCP_DOMAIN: demo.gcp.red-chesterfield.com
+BASE_AZ_DOMAIN: az.demo.red-chesterfield.com
 
 # The resulting GSLB domain is "{{GSLB_ZONE}}.{{BASE_DOMAIN}}" and 
 # the GSLB records would be www.ocp.f5bddemos.io, crm.ocp.f5bddemos.io 
