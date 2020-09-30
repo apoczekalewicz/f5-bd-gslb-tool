@@ -24,7 +24,7 @@
     #     extra_args: --upgrade --user
     - set_fact:
         F5AAS_PASS: "{{ANSIBLE_NET_PASSWORD}}"
-        F5AAS_USER: "{{ANSIBLE_NET_USER}}"
+        F5AAS_USER: "{{ANSIBLE_NET_USERNAME}}"
 
     - debug: msg="Lookup IPs"
     - name: Generate apiEndpoint URLs
