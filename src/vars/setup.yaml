@@ -12,6 +12,9 @@ BASE_AWS_DOMAIN: demo.red-chesterfield.com
 BASE_GCP_DOMAIN: demo.gcp.red-chesterfield.com
 BASE_AZ_DOMAIN: az.demo.red-chesterfield.com
 
+APP_NAME: pacman
+PROJECT_NAME: pacman-app
+
 # The resulting GSLB domain is "{{GSLB_ZONE}}.{{BASE_DOMAIN}}" and 
 # the GSLB records would be www.ocp.f5bddemos.io, crm.ocp.f5bddemos.io 
 # following the sample values above.
