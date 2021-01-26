@@ -15,10 +15,10 @@
     - name: Pip install dependencies
       pip:
         name:
-    #     - setuptools
+        - setuptools
     #     - certifi
         - dnspython
-    #    - dig
+        - dig
     #     # - kubernetes
     #     # - openshift
         extra_args: --upgrade --user
