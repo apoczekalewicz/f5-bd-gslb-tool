@@ -13,12 +13,12 @@
     - debug: msg="BASE_DOMAIN={{BASE_DOMAIN}}"
 
     - name: Pip install dependencies
-       pip:
-         name:
+      pip:
+        name:
     #     - setuptools
     #     - certifi
-         - dnspython
-         - dig
+        - dnspython
+        - dig
     #     # - kubernetes
     #     # - openshift
     #     extra_args: --upgrade --user
