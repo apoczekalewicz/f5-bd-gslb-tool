@@ -39,7 +39,8 @@
 
     - name: Retrieve publicAddress (apoczeka)
       set_fact:
-        publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'console-openshift-console.apps.'+item+'.'+BASE_DOMAIN).split(',')[0]} }) }}"
+        #        publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'console-openshift-console.apps.'+item+'.'+BASE_DOMAIN).split(',')[0]} }) }}"
+        publicAddress: 1.2.3.4
       loop: "{{target_clusters}}"
       when: lookup('dig', 'console-openshift-console.apps.'+item+'.'+BASE_DOMAIN).split(',')[0] != 'NXDOMAIN'
 
