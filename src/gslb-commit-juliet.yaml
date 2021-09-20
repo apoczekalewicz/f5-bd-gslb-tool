@@ -37,6 +37,13 @@
       loop: "{{target_clusters}}"
       when: lookup('dig', 'console-openshift-console.apps.'+item+'.'+BASE_AWS_DOMAIN).split(',')[0] != 'NXDOMAIN'
 
+    - name: Retrieve publicAddress (apoczeka)
+      set_fact:
+        publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'console-openshift-console.apps.'+item+'.'+BASE_DOMAIN).split(',')[0]} }) }}"
+      loop: "{{target_clusters}}"
+      when: lookup('dig', 'console-openshift-console.apps.'+item+'.'+BASE_DOMAIN).split(',')[0] != 'NXDOMAIN'
+
+
     - name: Retrieve publicAddress for GCP
       set_fact:
         publicAddress: "{{ publicAddress|default({}) | combine({ item: { 'az1': lookup('dig', 'console-openshift-console.apps.'+item+'.'+BASE_GCP_DOMAIN).split(',')[0]} }) }}"
