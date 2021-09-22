@@ -23,7 +23,8 @@
   include_tasks: routes.yaml
   with_items: "{{ target_clusters }}"
   vars:
-    monitorType: "http_advanced"
+    #    monitorType: "http_advanced"
+    monitorType: "tcp_standard"
     protocol: "http"
   when: ROUTES_TYPE == "http"
 
