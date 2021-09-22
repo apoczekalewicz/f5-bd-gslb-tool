@@ -25,7 +25,8 @@
   vars:
     #    monitorType: "http_advanced"
     monitorType: "tcp_standard"
-    protocol: "http"
+      #    protocol: "http"
+    targetPort: "80"
   when: ROUTES_TYPE == "http"
 
 # - meta: end_play
